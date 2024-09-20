@@ -1,0 +1,50 @@
+version: '1.0'
+
+services:
+  minidb:
+    build: 
+      context: ./Docker-files/db
+    image: rootg3/minidb
+    container_name: minidb
+    ports:
+      - "3306:3306"
+    volumes:
+      - minidbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=vprodbpass
+
+  minicache:
+    image: memcached
+    ports:
+      - "11211:11211"
+
+  minimq:
+    image: rabbitmq
+    ports:
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+  
+  miniapp:
+    build: 
+      context: ./Docker-files/app
+    image: rootg3/miniapp
+    container_name: miniapp
+    ports:
+      - "8080:8080"
+    volumes:
+      - miniappdata:/usr/local/tomcat/webapps
+
+  miniweb:
+    build: 
+      context: ./Docker-files/web
+    image: rootg3/miniweb
+    container_name: miniweb
+    ports:
+      - "80:80"
+
+
+volumes:
+  minidbdata: {}
+  miniappdata: {}
